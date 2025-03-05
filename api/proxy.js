@@ -35,6 +35,43 @@ export default async function handler(req, res) {
                         body { margin: 0; background: black; display: flex; justify-content: center; align-items: center; height: 100vh; }
                         iframe { width: 100%; height: 100vh; border: none; }
                     </style>
+                    <script>
+                        // ✅ Disable Right Click
+                        document.addEventListener("contextmenu", event => event.preventDefault());
+
+                        // ✅ Disable DevTools Shortcuts
+                        document.addEventListener("keydown", function(event) {
+                            if (event.keyCode === 123 || // F12
+                                (event.ctrlKey && event.shiftKey && (event.keyCode === 73 || event.keyCode === 74)) || // Ctrl+Shift+I / J
+                                (event.ctrlKey && event.keyCode === 85) || // Ctrl+U
+                                (event.ctrlKey && event.keyCode === 83)) { // Ctrl+S
+                                event.preventDefault();
+                            }
+                        });
+
+                        // ✅ Anti Console Hack
+                        (function() {
+                            const devtools = new Image();
+                            Object.defineProperty(devtools, 'id', {
+                                get: function() {
+                                    alert("Developer Tools are disabled!");
+                                    throw new Error("DevTools detected");
+                                }
+                            });
+                            setInterval(() => { console.log(devtools); }, 1000);
+                        })();
+
+                        // ✅ Anti Debugging Loop
+                        (function antiDebug() {
+                            function detectDevTools() {
+                                if (window.outerHeight - window.innerHeight > 100 || window.outerWidth - window.innerWidth > 100) {
+                                    alert("Developer Tools Detected!");
+                                    window.close();
+                                }
+                            }
+                            setInterval(detectDevTools, 500);
+                        })();
+                    </script>
                 </head>
                 <body>
                     <iframe id="vidsrc-frame" src="${embedUrl}" allowfullscreen sandbox="allow-scripts allow-same-origin allow-presentation"></iframe>
